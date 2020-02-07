@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { Grid } from '@material-ui/core';
+import axiosInstance, { AxiosInstance } from '../../helpers/axios';
 
 import {
   Budget,
@@ -10,7 +11,8 @@ import {
   LatestSales,
   UsersByDevice,
   LatestProducts,
-  LatestOrders
+  LatestOrders,
+  Card
 } from './components';
 
 const useStyles = makeStyles(theme => ({
@@ -21,6 +23,32 @@ const useStyles = makeStyles(theme => ({
 
 const Dashboard = () => {
   const classes = useStyles();
+
+  const [coinMeta, setCoinMeta] = useState({ totalTokens: 0, decimals: 0, name: '', symbol: '', tokenBalances: [] });
+
+  useEffect(() => {
+    
+    axiosInstance.post('', {id: '1', jsonrpc: '2.0', method: 'GetSmartContractInit', params: ['5938fc8af82250ad6cf1da3bb92f4aa005cb2717']})
+    .catch((error) => console.log(error))
+    .then((response) => {
+      setCoinMeta({
+        ...coinMeta,
+        totalTokens: response.data.result.find(object => object.vname === 'total_tokens').value,
+        decimals: response.data.result.find(object => object.vname === 'decimals').value,
+        name: response.data.result.find(object => object.vname === 'name').value,
+        symbol: response.data.result.find(object => object.vname === 'symbol').value
+      })
+    });
+    
+    axiosInstance.post('', {id: '1', jsonrpc: '2.0', method: 'GetSmartContractState', params: ['5938fc8af82250ad6cf1da3bb92f4aa005cb2717']})
+    .catch((error) => console.log(error))
+    .then((response) => {
+      setCoinMeta({
+        ...coinMeta,
+        tokenBalances: response.data.result.balances
+      })
+    });
+  });
 
   return (
     <div className={classes.root}>
@@ -35,7 +63,7 @@ const Dashboard = () => {
           xl={3}
           xs={12}
         >
-          <Budget />
+          <Card data={{title: "Period", value: "$24,000"}}/>
         </Grid>
         <Grid
           item
