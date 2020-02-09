@@ -10,6 +10,8 @@ import {
   CardHeader,
   CardContent,
   Button,
+  BottomNavigation,
+  BottomNavigationAction,
   Divider,
   Table,
   TableBody,
@@ -55,24 +57,17 @@ const LatestOrders = props => {
 
   const classes = useStyles();
 
-  const [orders] = useState(mockData);
+  const [orders] = useState(props.value);
 
   return (
+    
+    
     <Card
       {...rest}
       className={clsx(classes.root, className)}
     >
       <CardHeader
-        action={
-          <Button
-            color="primary"
-            size="small"
-            variant="outlined"
-          >
-            New entry
-          </Button>
-        }
-        title="Latest Orders"
+        title="Coin Token Balances"
       />
       <Divider />
       <CardContent className={classes.content}>
@@ -81,8 +76,7 @@ const LatestOrders = props => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Order Ref</TableCell>
-                  <TableCell>Customer</TableCell>
+                  <TableCell>Token Name</TableCell>
                   <TableCell sortDirection="desc">
                     <Tooltip
                       enterDelay={300}
@@ -92,34 +86,20 @@ const LatestOrders = props => {
                         active
                         direction="desc"
                       >
-                        Date
+                        Token Balance
                       </TableSortLabel>
                     </Tooltip>
                   </TableCell>
-                  <TableCell>Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {orders.map(order => (
+                {props.value.map((order, i) => (
                   <TableRow
                     hover
                     key={order.id}
                   >
-                    <TableCell>{order.ref}</TableCell>
-                    <TableCell>{order.customer.name}</TableCell>
-                    <TableCell>
-                      {moment(order.createdAt).format('DD/MM/YYYY')}
-                    </TableCell>
-                    <TableCell>
-                      <div className={classes.statusContainer}>
-                        <StatusBullet
-                          className={classes.status}
-                          color={statusColors[order.status]}
-                          size="sm"
-                        />
-                        {order.status}
-                      </div>
-                    </TableCell>
+                    <TableCell>{props.keysToken[i]}</TableCell>
+                    <TableCell>{order}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -129,13 +109,7 @@ const LatestOrders = props => {
       </CardContent>
       <Divider />
       <CardActions className={classes.actions}>
-        <Button
-          color="primary"
-          size="small"
-          variant="text"
-        >
-          View all <ArrowRightIcon />
-        </Button>
+    
       </CardActions>
     </Card>
   );
