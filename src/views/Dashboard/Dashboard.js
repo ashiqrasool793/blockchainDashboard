@@ -5,7 +5,7 @@ import axiosInstance, { AxiosInstance } from '../../helpers/axios';
 import SearchIcon from '@material-ui/icons/Search';
 import {
   ButtonGroup,
-  Button,
+  CircularProgress,
   InputBase,
   IconButton,
   Paper,
@@ -28,10 +28,14 @@ import { ReportBase } from 'istanbul-lib-report';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(1)
+    padding: theme.spacing(1),
   },
   input: {
     padding: theme.spacing(2),
+    paddingBottom: theme.spacing(0)
+  },
+  loader: {
+    marginLeft:'50%',
     paddingBottom: theme.spacing(0)
   }
 }));
@@ -47,6 +51,9 @@ const Dashboard = () => {
   const [searchVal, setSearchVal] = React.useState('');
 
   const [error, setError] = React.useState(false);
+
+  const [loading, setLoading] = React.useState(false);
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -69,9 +76,11 @@ const Dashboard = () => {
       .then((response) => {
         console.log(response)
         if (response.data.error) {
+          setLoading(false)
           setError(true)
         }
         else {
+          setLoading(false)
           setError(false)
           setCoinMeta({
             ...coinMeta,
@@ -90,9 +99,11 @@ const Dashboard = () => {
       .then((response) => {
         console.log(response)
         if (response.data.error) {
+          setLoading(false)
           setError(true)
         }
         else {
+          setLoading(false)
           setError(false)
           setTokenBalances({
             tokenBalances: response.data.result.balances
@@ -104,11 +115,13 @@ const Dashboard = () => {
   const fetchDetails = (inputAddress) => {
     //setAddress(address1)
     setSearchVal('');
+    setLoading(true)
     fetchTokenDetails(inputAddress)
     fetchTokenBalance(inputAddress)
   }
 
   useEffect(() => {
+    setLoading(true)
     fetchTokenDetails(address[value])
     fetchTokenBalance(address[value])
   }, []);
@@ -152,7 +165,18 @@ const Dashboard = () => {
               </Tabs>
             </Paper>
           </Grid>
-          {!error ? 
+          {loading ? 
+          <Grid
+          item
+          lg={12}
+          md={12}
+          xl={9}
+          xs={12}
+        >
+          <CircularProgress                 className={classes.loader}
+color="primary" /> 
+          </Grid>
+          : !error ? 
           <React.Fragment>
           <Grid
             item
